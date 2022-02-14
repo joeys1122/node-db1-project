@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const Accounts = require('./accounts-model');
+const { checkAccountId, checkAccountNameUnique, checkAccountPayload } = require('./accounts-middleware');
 
 router.get('/', (req, res, next) => {
   Accounts.getAll()
@@ -8,51 +9,56 @@ router.get('/', (req, res, next) => {
     })
     .catch(err => {
       console.log(err);
+      next({ status: 500, message: 'error getting accounts' });
     })
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', checkAccountId, (req, res, next) => {
   Accounts.getById(req.params.id)
     .then(account => {
       res.json(account);
     })
     .catch(err => {
       console.log(err);
+      next({ status: 500, message: 'error getting account' });
     })
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAccountNameUnique, (req, res, next) => {
   Accounts.create(req.body)
     .then(account => {
       res.status(201).json(account);
     })
     .catch(err => {
       console.log(err)
+      next({ status: 500, message: 'error posting account' });
     })
 })
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', checkAccountId, (req, res, next) => {
   Accounts.updateById(req.params.id, req.body)
     .then(account => {
       res.json(account);
     })
     .catch(err => {
       console.log(err);
+      next({ status: 500, message: 'error updating account' });
     })
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', checkAccountId, (req, res, next) => {
   Accounts.deleteById(req.params.id)
     .then(account => {
       res.json(account);
     })
     .catch(err => {
       console.log(err);
+      next({ status: 500, message: 'error deleting account' });
     })
 })
 
 router.use((err, req, res, next) => { // eslint-disable-line
-  // DO YOUR MAGIC
+  res.status(err.status || 500).json({ message: err.message });
 })
 
 module.exports = router;
