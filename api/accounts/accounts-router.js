@@ -24,7 +24,7 @@ router.get('/:id', (req, res, next) => {
 router.post('/', (req, res, next) => {
   Accounts.create(req.body)
     .then(account => {
-      res.json(account);
+      res.status(201).json(account);
     })
     .catch(err => {
       console.log(err)
@@ -32,11 +32,23 @@ router.post('/', (req, res, next) => {
 })
 
 router.put('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
+  Accounts.updateById(req.params.id, req.body)
+    .then(account => {
+      res.json(account);
+    })
+    .catch(err => {
+      console.log(err);
+    })
 });
 
 router.delete('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
+  Accounts.deleteById(req.params.id)
+    .then(account => {
+      res.json(account);
+    })
+    .catch(err => {
+      console.log(err);
+    })
 })
 
 router.use((err, req, res, next) => { // eslint-disable-line
