@@ -24,7 +24,7 @@ router.get('/:id', checkAccountId, (req, res, next) => {
     })
 })
 
-router.post('/', checkAccountNameUnique, (req, res, next) => {
+router.post('/', checkAccountPayload, checkAccountNameUnique, (req, res, next) => {
   Accounts.create(req.body)
     .then(account => {
       res.status(201).json(account);
@@ -35,7 +35,7 @@ router.post('/', checkAccountNameUnique, (req, res, next) => {
     })
 })
 
-router.put('/:id', checkAccountId, (req, res, next) => {
+router.put('/:id', checkAccountId, checkAccountPayload, (req, res, next) => {
   Accounts.updateById(req.params.id, req.body)
     .then(account => {
       res.json(account);
